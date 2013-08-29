@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Security.Cryptography;
 using System.IO;
-using System.Threading;
 
 namespace Steg
 {
@@ -38,7 +37,6 @@ namespace Steg
                 {
                     for (int W = 0; W < WDiv; W = W + 8)
                     {
-                        //Console.WriteLine("{0} - {1}",H, W);
                         string E = EncodeTarget.Substring(StringPointer, 1);
                         Fiddled = Fiddle(H, W, E, Fiddled);
                         StringPointer++;
@@ -83,7 +81,8 @@ namespace Steg
                 Console.WriteLine("Please enter a file name and a string to encode in there. $tool.exe hello.jpg \"I am a string\"");
             }
         }
-
+        
+        // This function attempt to get that jpeg block to equal the letter requested
         static Random Rand;
         static Bitmap Fiddle(int TH, int TW, string E, Bitmap I)
         {
@@ -101,7 +100,6 @@ namespace Steg
                     int R = Rand.Next(0, 255);
                     int G = Rand.Next(0, 255);
                     int B = Rand.Next(0, 255);
-                    //Console.WriteLine("Fiddled with {0} {1}", H, W);
                     I.SetPixel(W, H, Color.FromArgb(255,R, G, B));
                     if (Check(TH, TW, E, I))
                     {
@@ -118,13 +116,8 @@ namespace Steg
             return Temp;
         }
 
-        /*
-         * bool IsBitSet(byte b, int pos)
-            {
-               return (b & (1 << pos)) != 0;
-            }*/
-
         static int aaa = 0;
+        // This function is used to get a bit of data back from the image
         static string Get(int TH, int TW, Bitmap I)
         {
              string boom = "";
@@ -132,7 +125,6 @@ namespace Steg
              {
                  for (int W = TW; W < TW + 8; W++)
                  {
-                     //Console.WriteLine("Checked {0} {1}", H, W);
                      Color C = I.GetPixel(W, H);
                      int R = C.R;
                      int G = C.G;
@@ -148,6 +140,8 @@ namespace Steg
              return (System.Text.Encoding.ASCII.GetString(hash).Substring(0,1));
     
         }
+        
+        // This function is used to test if the "fiddle" with the jpeg block actually worked.
         static bool Check(int TH, int TW, string E, Bitmap I)
         {
 
