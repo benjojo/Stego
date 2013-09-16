@@ -42,6 +42,7 @@ namespace Steg
                         Fiddled = Fiddle(H, W, E, Fiddled);
                         if (Fiddled == null)
                         {
+                            Console.WriteLine("Block cannot be warped, Skipping.");
                             Fiddled = Fiddle(H, W, string.Format("{0}", 0xff), FiddleBackup);
                         }
                         else
@@ -66,13 +67,26 @@ namespace Steg
                 int HDiv = Orig.Height / 8;
                 int WDiv = Orig.Width / 8;
                 int StringPointer = 0;
-                for (int H = 0; H < HDiv; H = H + 8)
+                for (int H = 0; H < Orig.Height; H = H + 8)
                 {
-                    for (int W = 0; W < WDiv; W = W + 8)
+                    for (int W = 0; W < Orig.Width; W = W + 8)
                     {
-                        Console.Write(Get(H, W, Orig));
+                        string o = Get(H, W, Orig);
+                        if (o == "\0")
+                        {
+                            goto end;
+                        }
+                        else if (o == string.Format("{0}", 0xff))
+                        {
+                            // Don't do anything
+                        }
+                        else
+                        {
+                            Console.Write(Get(H, W, Orig));
+                        }
                     }
                 }
+            end: ;
                 Console.WriteLine("");
             }
             else
@@ -86,10 +100,10 @@ namespace Steg
         static Bitmap Fiddle(int TH, int TW, string E, Bitmap I)
         {
             Bitmap Temp = I;
+            int FiddleAmount = 0; // Times this has been fiddled with.
         tryagain: ;
             int H = TH;
             int W = TW;
-            int FiddleAmount = 0; // Times this has been fiddled with.
             for (H = TH; H < TH + 8; H++)
             {
                 for (W = TW; W < TW + 8; W++)
@@ -124,11 +138,14 @@ namespace Steg
         // This function is used to get a bit of data back from the image
         static string Get(int TH, int TW, Bitmap I)
         {
+            
              string boom = "";
              for (int H = TH; H < TH + 8; H++)
              {
                  for (int W = TW; W < TW + 8; W++)
                  {
+                     if (I.Height <= H || I.Width <= W)
+                         return "";
                      Color C = I.GetPixel(W, H);
                      int R = C.R;
                      int G = C.G;
