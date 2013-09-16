@@ -16,7 +16,7 @@ namespace Steg
             string WD = Path.GetDirectoryName(Environment.CurrentDirectory);
             foreach(string arg in args)
             {
-                if (arg.EndsWith(".jpg"))
+                if (arg.EndsWith(".jpg") || arg.EndsWith(".png"))
                 {
                     FileName = arg;
                 }
