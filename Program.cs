@@ -51,7 +51,8 @@ namespace Steg
             {
                 // Decode time.
                 Bitmap Orig = new Bitmap(Image.FromFile(FileName));
-                                int HDiv = Orig.Height / 8;
+
+                int HDiv = Orig.Height / 8;
                 int WDiv = Orig.Width / 8;
                 int StringPointer = 0;
                 for (int H = 0; H < HDiv; H = H + 8)
@@ -62,7 +63,6 @@ namespace Steg
                     }
                 }
                 Console.WriteLine("");
-                Console.Read();
             }
             else
             {
@@ -76,8 +76,8 @@ namespace Steg
         {
             Bitmap Temp = I;
         tryagain: ;
-        int H = TH;
-        int W = TW;
+            int H = TH;
+            int W = TW;
             for (H = TH; H < TH + 8; H++)
             {
                 for (W = TW; W < TW + 8; W++)
