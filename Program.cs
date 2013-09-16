@@ -140,11 +140,9 @@ namespace Steg
              return (System.Text.Encoding.ASCII.GetString(hash).Substring(0,1));
     
         }
-        
-        // This function is used to test if the "fiddle" with the jpeg block actually worked.
-        static bool Check(int TH, int TW, string E, Bitmap I)
-        {
 
+        static Bitmap SaveWithJpegQuality(Bitmap I)
+        {
             EncoderParameter myEncoderParameter;
             EncoderParameters myEncoderParameters;
             ImageCodecInfo myImageCodecInfo;
@@ -157,11 +155,15 @@ namespace Steg
             myEncoderParameters.Param[0] = myEncoderParameter;
             MemoryStream A = new MemoryStream();
             I.Save(A, myImageCodecInfo, myEncoderParameters);
-
-
-            //Thread.Sleep(50);
             Bitmap Iold = I;
             I = new Bitmap(Image.FromStream(A));
+            return I;
+        }
+
+        // This function is used to test if the "fiddle" with the jpeg block actually worked.
+        static bool Check(int TH, int TW, string E, Bitmap I)
+        {
+            I = SaveWithJpegQuality(I);
             string boom = "";
             for (int H = TH; H < TH + 8; H++)
             {
@@ -183,7 +185,6 @@ namespace Steg
             byte[] hash = md5.ComputeHash(inputBytes);
             byte[] c = System.Text.Encoding.ASCII.GetBytes(E);
             aaa++;
-            //Console.WriteLine("{0} - {1}", (int)hash[0], (int)c[0]);
             if (hash[0] == System.Text.Encoding.ASCII.GetBytes(E)[0])
             {
                 Console.WriteLine("Got a Ding on {0}", E);
