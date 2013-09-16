@@ -45,19 +45,7 @@ namespace Steg
                     }
                 }
             boop: ;
-
-                EncoderParameter myEncoderParameter;
-                EncoderParameters myEncoderParameters;
-                ImageCodecInfo myImageCodecInfo;
-                Encoder myEncoder;
-                myEncoder = Encoder.Quality;
-                // Save the bitmap as a JPEG file with quality level 25.
-                myImageCodecInfo = GetEncoderInfo("image/jpeg");
-                myEncoderParameter = new EncoderParameter(myEncoder, 25L);
-                myEncoderParameters = new EncoderParameters(1);
-                myEncoderParameters.Param[0] = myEncoderParameter;
-                Fiddled.Save("./done.jpg", myImageCodecInfo, myEncoderParameters);
-
+                SaveWithJpegQuality(Fiddled).Save("./done.jpg");
             }
             else if (FileName != "")
             {
