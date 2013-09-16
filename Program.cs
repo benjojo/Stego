@@ -33,15 +33,26 @@ namespace Steg
                 int HDiv = Orig.Height / 8;
                 int WDiv = Orig.Width / 8;
                 int StringPointer = 0;
-                for (int H = 0; H < HDiv; H = H + 8)
+                for (int H = 0; H < Orig.Height; H = H + 8)
                 {
-                    for (int W = 0; W < WDiv; W = W + 8)
+                    for (int W = 0; W < Orig.Width; W = W + 8)
                     {
                         string E = EncodeTarget.Substring(StringPointer, 1);
+                        Bitmap FiddleBackup = Fiddled;
                         Fiddled = Fiddle(H, W, E, Fiddled);
-                        StringPointer++;
+                        if (Fiddled == null)
+                        {
+                            Fiddled = Fiddle(H, W, string.Format("{0}", 0xff), FiddleBackup);
+                        }
+                        else
+                        {
+                            StringPointer++;
+                        }
+
                         if (StringPointer == EncodeTarget.Length)
+                        {
                             goto boop;
+                        }
                     }
                 }
             boop: ;
@@ -78,20 +89,26 @@ namespace Steg
         tryagain: ;
             int H = TH;
             int W = TW;
+            int FiddleAmount = 0; // Times this has been fiddled with.
             for (H = TH; H < TH + 8; H++)
             {
                 for (W = TW; W < TW + 8; W++)
                 {
+                    FiddleAmount++;
+
                     Color C = I.GetPixel(W, H);
                     
-
                     int R = Rand.Next(0, 255);
                     int G = Rand.Next(0, 255);
                     int B = Rand.Next(0, 255);
                     I.SetPixel(W, H, Color.FromArgb(255,R, G, B));
+                    if (FiddleAmount > 9000) // over 9000!?
+                    {
+                        return null;
+                    }
                     if (Check(TH, TW, E, I))
                     {
-                        goto skip;
+                        return Temp;
                     }
                     else
                     {
@@ -100,8 +117,7 @@ namespace Steg
                 }
             }
             goto tryagain;
-        skip: ;
-            return Temp;
+            
         }
 
         static int aaa = 0;
