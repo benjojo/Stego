@@ -44,6 +44,10 @@ namespace Steg
                         {
                             Console.WriteLine("Block cannot be warped, Skipping.");
                             Fiddled = Fiddle(H, W, string.Format("{0}", 0xff), FiddleBackup);
+                            if (Fiddled == null) // In case of double failure :(
+                            {
+                                Fiddled = FiddleBackup;
+                            }
                         }
                         else
                         {
@@ -66,7 +70,6 @@ namespace Steg
 
                 int HDiv = Orig.Height / 8;
                 int WDiv = Orig.Width / 8;
-                int StringPointer = 0;
                 for (int H = 0; H < Orig.Height; H = H + 8)
                 {
                     for (int W = 0; W < Orig.Width; W = W + 8)
