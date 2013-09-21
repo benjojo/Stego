@@ -43,7 +43,7 @@ namespace Steg
                         if (Fiddled == null)
                         {
                             Console.WriteLine("Block cannot be warped, Skipping.");
-                            Fiddled = Fiddle(H, W, string.Format("{0}", 0xff), FiddleBackup);
+                            Fiddled = Fiddle(H, W, "" + (char)0xff, FiddleBackup);
                             if (Fiddled == null) // In case of double failure :(
                             {
                                 Fiddled = FiddleBackup;
@@ -79,7 +79,7 @@ namespace Steg
                         {
                             goto end;
                         }
-                        else if (o == string.Format("{0}", 0xff))
+                        else if (o == ""+(char)0xff)
                         {
                             // Don't do anything
                         }
