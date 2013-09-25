@@ -211,14 +211,14 @@ namespace Steg
             aaa++;
             if (hash[0] == System.Text.Encoding.ASCII.GetBytes(E)[0])
             {
-                Console.WriteLine("Got a Ding on {0}", E);
+                Console.WriteLine("Warped block {0},{1} to be char {2}",TW,TH, E);
                 return true;
             }
             else
             {
                 if (aaa % 100 == 0)
                 {
-                    Console.WriteLine("Done {0} jpgs", aaa);
+                    Console.WriteLine("Processed {0} images", aaa);
                 }
                 return false;
             }
