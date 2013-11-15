@@ -10,10 +10,9 @@ namespace Steg
     {
         static void Main(string[] args)
         {
-            Rand = new Random();
+            Rand = new Random(); // Init the RNG
             string FileName = "";
             string EncodeTarget = "";
-            string WD = Path.GetDirectoryName(Environment.CurrentDirectory);
             foreach(string arg in args)
             {
                 if (arg.EndsWith(".jpg") || arg.EndsWith(".png"))
@@ -137,31 +136,37 @@ namespace Steg
             
         }
 
+        static string CrunchBlock(int TH, int TW, Bitmap I)
+        {
+            string HashTarget = "";
+            for (int H = TH; H < TH + 8; H++)
+            {
+                for (int W = TW; W < TW + 8; W++)
+                {
+                    if (I.Height <= H || I.Width <= W)
+                        return "";
+                    Color C = I.GetPixel(W, H);
+                    int R = C.R;
+                    int G = C.G;
+                    int B = C.B;
+
+                    HashTarget = HashTarget + R + G + B;
+
+                }
+            }
+            return HashTarget;
+        }
+
         static int aaa = 0;
         // This function is used to get a bit of data back from the image
         static string Get(int TH, int TW, Bitmap I)
         {
-            
-             string boom = "";
-             for (int H = TH; H < TH + 8; H++)
-             {
-                 for (int W = TW; W < TW + 8; W++)
-                 {
-                     if (I.Height <= H || I.Width <= W)
-                         return "";
-                     Color C = I.GetPixel(W, H);
-                     int R = C.R;
-                     int G = C.G;
-                     int B = C.B;
 
-                     boom = boom + R + G + B;
-
-                 }
-             }
-             MD5 md5 = System.Security.Cryptography.MD5.Create();
-             byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(boom + "");
-             byte[] hash = md5.ComputeHash(inputBytes);
-             return (System.Text.Encoding.ASCII.GetString(hash).Substring(0,1));
+            string boom = CrunchBlock(TH,TW,I);
+            MD5 md5 = System.Security.Cryptography.MD5.Create();
+            byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(boom + "");
+            byte[] hash = md5.ComputeHash(inputBytes);
+            return (System.Text.Encoding.ASCII.GetString(hash).Substring(0,1));
     
         }
 
