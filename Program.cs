@@ -193,11 +193,11 @@ namespace Steg
         static bool Check(int TH, int TW, string E, Bitmap I)
         {
             I = SaveWithJpegQuality(I);
-            string boom = CrunchBlock(TH, TW, I);
+            string HashTarget = CrunchBlock(TH, TW, I);
 
             MD5 md5 = System.Security.Cryptography.MD5.Create();
-            byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(boom + "");
-            byte[] hash = md5.ComputeHash(inputBytes);
+            byte[] HashInputBytes = System.Text.Encoding.ASCII.GetBytes(HashTarget + "");
+            byte[] hash = md5.ComputeHash(HashInputBytes);
             byte[] c = System.Text.Encoding.ASCII.GetBytes(E);
             ImageIterationCount++;
             if (hash[0] == System.Text.Encoding.ASCII.GetBytes(E)[0])
@@ -208,19 +208,17 @@ namespace Steg
             else
             {
                 if (ImageIterationCount % 100 == 0)
-                {
                     Console.WriteLine("Processed {0} images", ImageIterationCount);
-                }
+                
                 return false;
             }
         }
 
         private static ImageCodecInfo GetEncoderInfo(String mimeType)
         {
-            int j;
             ImageCodecInfo[] encoders;
             encoders = ImageCodecInfo.GetImageEncoders();
-            for (j = 0; j < encoders.Length; ++j)
+            for (int j = 0; j < encoders.Length; j++)
             {
                 if (encoders[j].MimeType == mimeType)
                     return encoders[j];
