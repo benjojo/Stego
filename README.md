@@ -1,4 +1,4 @@
-Stego
+Stego [![Build Status](https://travis-ci.org/benjojo/Stego.png?branch=master)](https://travis-ci.org/benjojo/Stego)
 =====
 
 Some insane way of hiding messages in jpeg artifacts.
