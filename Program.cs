@@ -37,7 +37,7 @@ namespace Steg
                     for (int W = 0; W < Orig.Width; W = W + 8)
                     {
                         string E = EncodeTarget.Substring(StringPointer, 1);
-                        Bitmap FiddleBackup = Fiddled;
+                        Bitmap FiddleBackup = Fiddled; // this is needed in the case that a block cannot be warped.
                         Fiddled = Fiddle(H, W, E, Fiddled);
                         if (Fiddled == null)
                         {
@@ -46,6 +46,7 @@ namespace Steg
                             if (Fiddled == null) // In case of double failure :(
                             {
                                 Fiddled = FiddleBackup;
+                                Console.WriteLine("Warning. Double Failure. This means the image won't be encoded 100% correctly");
                             }
                         }
                         else
@@ -55,40 +56,18 @@ namespace Steg
 
                         if (StringPointer == EncodeTarget.Length)
                         {
-                            goto boop;
+                            goto QuickExit;
                         }
                     }
                 }
-            boop: ;
+            QuickExit: ;
                 SaveWithJpegQuality(Fiddled).Save("./done.jpg");
             }
             else if (FileName != "")
             {
                 // Decode time.
                 Bitmap Orig = new Bitmap(Image.FromFile(FileName));
-
-                int HDiv = Orig.Height / 8;
-                int WDiv = Orig.Width / 8;
-                for (int H = 0; H < Orig.Height; H = H + 8)
-                {
-                    for (int W = 0; W < Orig.Width; W = W + 8)
-                    {
-                        string o = Get(H, W, Orig);
-                        if (o == "\0")
-                        {
-                            goto end;
-                        }
-                        else if (o == ""+(char)0xff)
-                        {
-                            // Don't do anything
-                        }
-                        else
-                        {
-                            Console.Write(Get(H, W, Orig));
-                        }
-                    }
-                }
-            end: ;
+                DecodeImage(Orig);
                 Console.WriteLine("");
             }
             else
@@ -96,7 +75,33 @@ namespace Steg
                 Console.WriteLine("Please enter a file name and a string to encode in there. $tool.exe hello.jpg \"I am a string\"");
             }
         }
-        
+
+        static public void DecodeImage(Bitmap Orig)
+        {
+            int HDiv = Orig.Height / 8;
+            int WDiv = Orig.Width / 8;
+            for (int H = 0; H < Orig.Height; H = H + 8)
+            {
+                for (int W = 0; W < Orig.Width; W = W + 8)
+                {
+                    string o = Get(H, W, Orig);
+                    if (o == "\0")
+                    {
+                        goto end;
+                    }
+                    else if (o == "" + (char)0xff)
+                    {
+                        // Don't do anything
+                    }
+                    else
+                    {
+                        Console.Write(Get(H, W, Orig));
+                    }
+                }
+            }
+        end: ;
+            return;
+        }
         // This function attempt to get that jpeg block to equal the letter requested
         static Random Rand;
         static Bitmap Fiddle(int TH, int TW, string E, Bitmap I)
@@ -136,6 +141,10 @@ namespace Steg
             
         }
 
+        // This function loops though all of the pixles in a block and gives you a string to hash.
+        // This function could be improved by not using a massive long string of numbers and infact just
+        // add in the int bytes in to a string to be hashed. Not sure if that will be faster or slower with
+        // the bitconverter. It also breaks images that where encoded with older versions.
         static string CrunchBlock(int TH, int TW, Bitmap I)
         {
             string HashTarget = "";
@@ -169,7 +178,7 @@ namespace Steg
             return (System.Text.Encoding.ASCII.GetString(hash).Substring(0,1));
     
         }
-
+        // This is a nice little shortcut fuction 
         static Bitmap SaveWithJpegQuality(Bitmap I)
         {
             EncoderParameter myEncoderParameter;
@@ -188,7 +197,6 @@ namespace Steg
             I = new Bitmap(Image.FromStream(A));
             return I;
         }
-
         // This function is used to test if the "fiddle" with the jpeg block actually worked.
         static bool Check(int TH, int TW, string E, Bitmap I)
         {
@@ -213,7 +221,7 @@ namespace Steg
                 return false;
             }
         }
-
+        // A quick shortcut function to do all the messy image encoder stuff.
         private static ImageCodecInfo GetEncoderInfo(String mimeType)
         {
             ImageCodecInfo[] encoders;
