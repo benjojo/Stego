@@ -193,21 +193,7 @@ namespace Steg
         static bool Check(int TH, int TW, string E, Bitmap I)
         {
             I = SaveWithJpegQuality(I);
-            string boom = "";
-            for (int H = TH; H < TH + 8; H++)
-            {
-                for (int W = TW; W < TW + 8; W++)
-                {
-                    //Console.WriteLine("Checked {0} {1}", H, W);
-                    Color C = I.GetPixel(W, H);
-                    int R = C.R;
-                    int G = C.G;
-                    int B = C.B;
-
-                    boom = boom + R + G + B;
-
-                }
-            }
+            string boom = CrunchBlock(TH, TW, I);
 
             MD5 md5 = System.Security.Cryptography.MD5.Create();
             byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(boom + "");
