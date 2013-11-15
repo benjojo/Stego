@@ -157,7 +157,7 @@ namespace Steg
             return HashTarget;
         }
 
-        static int aaa = 0;
+        static int ImageIterationCount = 0;
         // This function is used to get a bit of data back from the image
         static string Get(int TH, int TW, Bitmap I)
         {
@@ -199,7 +199,7 @@ namespace Steg
             byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(boom + "");
             byte[] hash = md5.ComputeHash(inputBytes);
             byte[] c = System.Text.Encoding.ASCII.GetBytes(E);
-            aaa++;
+            ImageIterationCount++;
             if (hash[0] == System.Text.Encoding.ASCII.GetBytes(E)[0])
             {
                 Console.WriteLine("Warped block {0},{1} to be char {2}",TW,TH, E);
@@ -207,9 +207,9 @@ namespace Steg
             }
             else
             {
-                if (aaa % 100 == 0)
+                if (ImageIterationCount % 100 == 0)
                 {
-                    Console.WriteLine("Processed {0} images", aaa);
+                    Console.WriteLine("Processed {0} images", ImageIterationCount);
                 }
                 return false;
             }
