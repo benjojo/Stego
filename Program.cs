@@ -94,7 +94,6 @@ namespace Steg
                         Console.WriteLine("This one starts with '{0}' or dec {1}", o, (int)StrByte[0]);
                         Environment.Exit(1);
                     }
-                    CharsIn++;
                     if (CharsIn != 0)
                     {
                         if (o == "\0")
@@ -110,6 +109,8 @@ namespace Steg
                             Console.Write(Get(H, W, Orig));
                         }
                     }
+
+                    CharsIn++;
 
                 }
             }
@@ -244,5 +245,7 @@ namespace Steg
             }
             return null;
         }
+
+        
     }
 }
