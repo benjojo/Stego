@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Text;
 using System.Security.Cryptography;
 using System.IO;
 
@@ -21,7 +22,7 @@ namespace Steg
                 }
                 else
                 {
-                    EncodeTarget = arg + "\0";
+                    EncodeTarget = ("" + (char)0xff) + arg + "\0";
                 }
             }
             if (FileName != "" && EncodeTarget != "")
@@ -78,6 +79,7 @@ namespace Steg
 
         static public void DecodeImage(Bitmap Orig)
         {
+            int CharsIn = 0;
             int HDiv = Orig.Height / 8;
             int WDiv = Orig.Width / 8;
             for (int H = 0; H < Orig.Height; H = H + 8)
@@ -85,6 +87,15 @@ namespace Steg
                 for (int W = 0; W < Orig.Width; W = W + 8)
                 {
                     string o = Get(H, W, Orig);
+                    byte[] StrByte = System.Text.ASCIIEncoding.Default.GetBytes(o);
+                    if (CharsIn == 0 && (StrByte[0] != 0xff || (int)StrByte[0] != 63 ))
+                    {
+                        Console.WriteLine("This does not look like a correct file. Stego files start with 0xff");
+                        Console.WriteLine("This one starts with {0} or {1}", o, (int)StrByte[0]);
+                        Environment.Exit(1);
+                    }
+
+
                     if (o == "\0")
                     {
                         goto end;
@@ -181,8 +192,8 @@ namespace Steg
             EncoderParameter myEncoderParameter;
             EncoderParameters myEncoderParameters;
             ImageCodecInfo myImageCodecInfo;
-            Encoder myEncoder;
-            myEncoder = Encoder.Quality;
+            System.Drawing.Imaging.Encoder myEncoder;
+            myEncoder = System.Drawing.Imaging.Encoder.Quality;
             // Save the bitmap as a JPEG file with quality level 25.
             myImageCodecInfo = GetEncoderInfo("image/jpeg");
             myEncoderParameter = new EncoderParameter(myEncoder, 25L);
