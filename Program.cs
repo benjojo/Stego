@@ -88,26 +88,29 @@ namespace Steg
                 {
                     string o = Get(H, W, Orig);
                     byte[] StrByte = System.Text.ASCIIEncoding.Default.GetBytes(o);
-                    if (CharsIn == 0 && (StrByte[0] != 0xff || (int)StrByte[0] != 63 ))
+                    if (CharsIn == 0 && (StrByte[0] != 0xff && (int)StrByte[0] != 63 ))
                     {
                         Console.WriteLine("This does not look like a correct file. Stego files start with 0xff");
-                        Console.WriteLine("This one starts with {0} or {1}", o, (int)StrByte[0]);
+                        Console.WriteLine("This one starts with '{0}' or dec {1}", o, (int)StrByte[0]);
                         Environment.Exit(1);
                     }
+                    CharsIn++;
+                    if (CharsIn != 0)
+                    {
+                        if (o == "\0")
+                        {
+                            goto end;
+                        }
+                        else if (o == "" + (char)0xff)
+                        {
+                            // Don't do anything
+                        }
+                        else
+                        {
+                            Console.Write(Get(H, W, Orig));
+                        }
+                    }
 
-
-                    if (o == "\0")
-                    {
-                        goto end;
-                    }
-                    else if (o == "" + (char)0xff)
-                    {
-                        // Don't do anything
-                    }
-                    else
-                    {
-                        Console.Write(Get(H, W, Orig));
-                    }
                 }
             }
         end: ;
