@@ -9,6 +9,7 @@ namespace Steg
 {
     class Program
     {
+        static bool NoHeaderCheck = false;
         static void Main(string[] args)
         {
             Rand = new Random(); // Init the RNG
@@ -20,10 +21,15 @@ namespace Steg
                 {
                     FileName = arg;
                 }
+                else if (arg == "-n")
+                {
+                    NoHeaderCheck = true;
+                }
                 else
                 {
                     EncodeTarget = ("" + (char)0xff) + arg + "\0";
                 }
+
             }
             if (FileName != "" && EncodeTarget != "")
             {
@@ -88,13 +94,13 @@ namespace Steg
                 {
                     string o = Get(H, W, Orig);
                     byte[] StrByte = System.Text.ASCIIEncoding.Default.GetBytes(o);
-                    if (CharsIn == 0 && (StrByte[0] != 0xff && (int)StrByte[0] != 63 ))
+                    if (CharsIn == 0 && (StrByte[0] != 0xff && (int)StrByte[0] != 63) && !NoHeaderCheck)
                     {
                         Console.WriteLine("This does not look like a correct file. Stego files start with 0xff");
-                        Console.WriteLine("This one starts with '{0}' or dec {1}", o, (int)StrByte[0]);
+                        Console.WriteLine("This one starts with '{0}' or dec {1} use -n to disable this check.", o, (int)StrByte[0]);
                         Environment.Exit(1);
                     }
-                    if (CharsIn != 0)
+                    if (CharsIn != 0 || NoHeaderCheck)
                     {
                         if (o == "\0")
                         {
