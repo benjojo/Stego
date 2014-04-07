@@ -176,8 +176,7 @@ namespace Steg
                     if (I.Height <= H || I.Width <= W)
                         return "";
                     Color C = I.GetPixel(W, H);
-                    
-                    HashTarget = HashTarget + (int)C.R + (int)C.G + (int)C.B;
+                    HashTarget = HashTarget + C.R + C.G + C.B;
 
                 }
             }
